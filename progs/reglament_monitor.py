@@ -5,16 +5,52 @@ from datetime        import datetime, time, date, timedelta
 from mysql.connector import MySQLConnection, Error
 from os              import system as bash
 
-DB_CONFIG = {
-  'host':     'localhost',
-  'database': 'computers',
-  'user':     'pingvin',
-  'password': 'server881130',
-}
-
 NOW = datetime.today ()
 
 conf = RawConfigParser ()
+
+conf.read ('/data/git/Python/confs/mysql.conf')
+DB_CONFIG = {
+  'host':     conf.get ('computers', 'host'),
+  'database': conf.get ('computers', 'database'),
+  'user':     conf.get ('computers', 'user'),
+  'password': conf.get ('computers', 'password'),
+}
+
+def write_db (table, columns, row):
+  '''Запись в БД'''
+  try:
+    con = MySQLConnection (**DB_CONFIG)
+    if con.is_connected ():
+      cur = con.cursor ()
+      sql = 'INSERT INTO %s %s VALUES %s' % (table, str (columns).replace ("'", ''), row)
+      cur.execute (sql)
+      con.commit ()
+
+  except Error as e:
+    print (e)
+
+  finally:
+    cur.close ()
+    con.close ()
+
+def update_db (table, column, value, case = None):
+  '''Обновление данных в БД'''
+  try:
+    con = MySQLConnection (**DB_CONFIG)
+    if con.is_connected ():
+      cur = con.cursor ()
+      sql = 'UPDATE %s SET %s = "%s"' % (table, column, value)
+      if case: sql += ' WHERE %s' % case
+      cur.execute (sql)
+      con.commit ()
+
+  except Error as e:
+    print (e)
+
+  finally:
+    cur.close ()
+    con.close ()
 
 def read_db (tables, columns, case = None, type = 'all'):
   '''Чтение из БД'''
@@ -66,17 +102,28 @@ class Host (object):
   def __str__ (self):
     return self.name
 
+class StaffNeed (object):
+  '''Необходимость обслуживания'''
+  def __init__ (self, id):
+    self.id      = id
+    self.host, self.type, self.is_need = read_db (tables = 'staff_need', columns = 'host, type, is_need', case = 'id = %d' % self.id, type = 'row')
+    self.is_need = bool (self.is_need)
+
+  def __str__(self):
+    return (self.id, self.host, self.type, self.is_need)
+
 for id_host in read_db (tables = 'hosts', columns = 'id', case = 'id > 0', type = 'all'):
   host = Host (id_host [0])
-  conf_file = '/network/%s/monitor.conf' % host.name
-  conf.read (conf_file)
-  if not conf.has_section ('staff_need'): conf.add_section ('staff_need')
 
   for id_staff_type in read_db (tables = 'staff_types', case = 'id > 0', columns = 'id', type = 'all'):
     staff_type = StaffType (id_staff_type [0])
+
+    staff_need = read_db (tables = 'staff_need', columns = 'id', case = 'host = %d AND type = %d' % (host.id, staff_type.id), type = 'val')
+    if not staff_need: write_db (table = 'staff_need', columns = ('host', 'type', 'is_need'), row = (host.id, staff_type.id, 0))
+    else:             update_db (table = 'staff_need', column = 'is_need', value = 0, case = 'host = %d AND type = %d' % (host.id, staff_type.id))
+
     period     = host.staff_periods [staff_type.name]
     last       = host.staff_lasts   [staff_type.name]
-    conf.set ('staff_need', staff_type.name, False)
 
     if not period:
       continue
@@ -84,8 +131,5 @@ for id_host in read_db (tables = 'hosts', columns = 'id', case = 'id > 0', type 
     if not last: last = date (1, 1, 1)
     control_date = datetime.combine ((last + timedelta (days = period)), time (0, 0, 0))
     if NOW > control_date:
-      conf.set ('staff_need', staff_type.name, True)
-
-  with open (conf_file, 'w') as config:
-    conf.write (config)
+      update_db (table = 'staff_need', column = 'is_need', value = 1, case = 'host = %d AND type = %d' % (host.id, staff_type.id))
 
