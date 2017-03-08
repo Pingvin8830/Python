@@ -183,6 +183,14 @@ class Host (object):
       list_hosts.append (Host (id = id [0]))
     return list_hosts
 
+  def filter (name = None, ip = None):
+    list_hosts = []
+    for id in read_db (tables = Host.TABLE, columns = 'id', case = 'id > 0', type = 'all'):
+      host = Host (id = id [0])
+      if (host.name == name) or (host.ip == ip):
+        list_hosts.append (host)
+    return list_hosts
+
 class StaffNeed (object):
   '''Необходимость обслуживания'''
   TABLE = 'staff_need'
@@ -208,6 +216,7 @@ class StaffNeed (object):
       self.is_need = bool (self.is_need)
     elif id and not (host and type):
       self.host, self.type, self.is_need, self.last_control = read_db (tables = self.TABLE, columns = 'host, type, is_need, last_control', case = 'id = %d' % id, type = 'row')
+      self.id   = id
       self.host = Host      (id = self.host)
       self.type = StaffType (id = self.type)
       self.is_need = bool (self.is_need)
@@ -227,3 +236,12 @@ class StaffNeed (object):
       update_db (table = self.TABLE, column = 'last_control', value = self.last_control, case = 'id = %d' % self.id)
     else:
       write_db (table = self.TABLE, columns = ('host', 'type', 'is_need', 'last_control'), row = (self.host.id, self.type.id, int (self.is_need), self.last_control))
+
+  def filter (host = None, type = None, is_need = None):
+    list_staff_need = []
+    for id in read_db (tables = StaffNeed.TABLE, columns = 'id', case = 'id > 0', type = 'all'):
+      staff_need = StaffNeed (id = id [0])
+      if   host and (staff_need.host.id == host.id): list_staff_need.append (staff_need)
+      elif type and (staff_need.type.id == type.id): list_staff_need.append (staff_need)
+    return list_staff_need
+
