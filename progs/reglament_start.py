@@ -17,7 +17,6 @@ for staff_need in staff_needs:
   if staff_need.is_need:
     success      = True
     staff_type   = staff_need.type
-    log = StaffLog (host = THIS_HOST, type = staff_type, date = NOW, time = NOW)
     staff_doings = StaffDoing.filter (type = staff_type)
     for staff_doing in staff_doings:
       command = staff_doing.command
@@ -37,4 +36,12 @@ for staff_need in staff_needs:
       print ('Success:', success)
       print ()
     if success:
+      log = StaffLog ()
+      log.id = 0
+      log.host = THIS_HOST
+      log.type = staff_type
+      log.data = NOW.date ()
+      log.time = NOW.time ()
       log.write ()
+      staff_need.is_need = False
+      staff_need.write ()
