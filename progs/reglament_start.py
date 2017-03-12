@@ -1,13 +1,15 @@
 #!/bin/python
 
-from os  import uname, system as bash
-from sys import path
+from datetime import datetime
+from os       import uname, system as bash
+from sys      import path
 
 path.append ('/data/git/Python/moduls')
 
-from reglament_classes import SystemCommand, StaffDoing, StaffType, Host, StaffNeed
+from reglament_classes import SystemCommand, StaffDoing, StaffType, Host, StaffNeed, StaffLog
 
 THIS_HOST = Host (name = uname ().nodename)
+NOW       = datetime.today ()
 
 staff_needs = StaffNeed.filter (host = THIS_HOST)
 
@@ -15,6 +17,7 @@ for staff_need in staff_needs:
   if staff_need.is_need:
     success      = True
     staff_type   = staff_need.type
+    log = StaffLog (host = THIS_HOST, type = staff_type, date = NOW, time = NOW)
     staff_doings = StaffDoing.filter (type = staff_type)
     for staff_doing in staff_doings:
       command = staff_doing.command
@@ -33,3 +36,5 @@ for staff_need in staff_needs:
         if staff_doing.is_need: success = False
       print ('Success:', success)
       print ()
+    if success:
+      log.write ()
