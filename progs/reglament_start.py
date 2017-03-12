@@ -43,5 +43,6 @@ for staff_need in staff_needs:
       log.data = NOW.date ()
       log.time = NOW.time ()
       log.write ()
-      staff_need.is_need = False
+      staff_need.is_need      = False
+      staff_need.last_control = NOW
       staff_need.write ()
