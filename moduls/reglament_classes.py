@@ -429,3 +429,19 @@ class StaffDoing (object):
       self.command = command
       self.type = type
 
+  def is_find (self):
+    return bool (read_db (tables = self.TABLE, columns = 'id', case = 'id = %d AND code = %d and command = %d AND is_need = %d AND type = %d AND is_args = %d AND is_loop = %d' % (self.id, self.code, self.command.id, int (self.is_need), self.type.id, int (self.is_args), int (self.is_loop))))
+
+  def filter (type):
+    list_staff_doing = []
+    for id in read_db (tables = StaffDoing.TABLE, columns = 'id', case = 'id > 0', type = 'all'):
+      staff_doing = StaffDoing (id = id [0])
+      if staff_doing.type.id == type.id: list_staff_doing.append (staff_doing)
+    for i in range (len (list_staff_doing)):
+      for j in range (i + 1, len (list_staff_doing)):
+        if list_staff_doing [i].code > list_staff_doing [j].code:
+          tmp                  = list_staff_doing [j]
+          list_staff_doing [j] = list_staff_doing [i]
+          list_staff_doing [i] = tmp
+    return list_staff_doing
+      
