@@ -106,7 +106,7 @@ class StaffLog (object):
       self.time = time
 
   def __str__ (self):
-    return 'Staff log %d: %s / %s - %s / %s' % (self.id, self.host.name, self.type.name, self.date, self.time)
+    return 'Staff log %d: %s / %s - %s / %s' % (self.id, self.host.name, self.type.name, self.data, self.time)
 
   def get (self, id = None, host = None, type = None, date = None):
     if not id and (host and type and date):
@@ -133,7 +133,7 @@ class StaffLog (object):
     return read_db (tables = self.TABLE, columns = 'max(date)', case = 'host = %d AND type = %d' % (host.id, type.id), type = 'val')
 
   def write (self):
-    write_db (table = self.TABLE, columns = ('host', 'type', 'date', 'time'), row = (self.host.id, self.type.id, self.date, self.time))
+    write_db (table = self.TABLE, columns = ('host', 'type', 'date', 'time'), row = (self.host.id, self.type.id, str (self.data), str (self.time)))
 
 class Host (object):
   '''Хост'''
