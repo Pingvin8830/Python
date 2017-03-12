@@ -245,3 +245,187 @@ class StaffNeed (object):
       elif type and (staff_need.type.id == type.id): list_staff_need.append (staff_need)
     return list_staff_need
 
+class SystemCommand (object):
+  '''Системная команда'''
+  TABLE = 'system_commands'
+
+  def __init__ (self, id = 0, name = None, text = None):
+    try:
+      self.get (id = id, name = name, text = text)
+    except:
+      self.id   = id
+      self.name = name
+      self.text = text
+
+  def __str__ (self):
+    return 'System command %d: %s - %s' % (self.id, self.name, self.text)
+
+  def get (self, id = 0, name = None, text = None):
+    if id and not (name and text):
+      self.name, self.text = read_db (tables = self.TABLE, columns = 'name, text', case = 'id = %d' % id, type = 'row')
+      self.id = id
+    elif not id and (name and text):
+      self.id   = read_db (tables = self.TABLE, columns = 'id', case = 'name = "%s" AND text = "%s"' % (name, text), type = 'val')
+      self.id   = self.id [0]
+      self.name = name
+      self.text = text
+    elif id and (name and text):
+      self.id   = id
+      self.name = name
+      self.text = text
+
+  def is_find (self):
+    return bool (read_db (tables = self.TABLE, columns = 'id', case = 'id = %d AND name = %s AND text = %s' % (self.id, self.name, self.text), type = 'val'))
+
+class StaffDoing (object):
+  '''Действие по регламенту'''
+  TABLE = 'staff_doings'
+
+  def __init__ (self, id = 0, code = None, command = None, task = None, is_need = False, comment = None, type = None, is_args = False, is_loop = False):
+    try:
+      self.get (id = id, code = code, command = command, type = type)
+    except:
+      self.id      = id
+      self.code    = code
+      self.command = command
+      self.task    = task
+      self.is_need = is_need
+      self.comment = comment
+      self.type    = type
+      self.is_args = is_args
+      self.is_loop = is_loop
+
+  def __str__ (self):
+    string = 'Staff doing %d: %d - %s (%s)' % (self.id, self.code, self.command.text, self.command.name)
+    if self.is_need: string += ', need'
+    if self.is_args: string += ', args'
+    if self.is_loop: string += ', loop'
+    return string
+
+  def get (self, id = 0, code = None, type = None, command = None):
+    if not id and not (code and type) and not (code and command) and (type and command):
+      self.id, self.code, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, code, task, is_need, comment, is_args, is_loop', case = 'command = %d AND type = %d' % (type, command), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.command = command
+      self.type    = type
+    elif not id and not (code and type) and (code and command) and not (type and command):
+      self.id, self.task, self.is_need, self.comment, self.type, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, task, is_need, comment, type, is_args, is_loop', case = 'code = %d AND command = %d' % (code, command.id), type = 'row')
+      self.type    = StaffType (id = self.type)
+      self.is_need = bool      (self.is_need)
+      self.is_args = bool      (self.is_args)
+      self.is_need = bool      (self.is_loop)
+      self.code    = code
+      self.command = command
+    elif not id and not (code and type) and (code and command) and (type and command):
+      self.id, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, task, is_need, comment, is_args, is_loop', case = 'code = %d AND command = %d AND type = %d' % (code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif not id and (code and type) and not (code and command) and not (type and command):
+      self.id, self.command, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, command, task, is_need, comment, is_args, is_loop', case = 'code = %d AND type = %d' % (code, type.id), type = 'row')
+      self.command = SystemCommand (id = self.command)
+      self.is_need = bool          (self.is_need)
+      self.is_args = bool          (self.is_args)
+      self.is_loop = bool          (self.is_loop)
+      self.code = code
+      self.type = type
+    elif not id and (code and type) and not (code and command) and (type and command):
+      self.id, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, task, is_need, comment, is_args, is_loop', case = 'code = %d AND command = %d AND type = %d' % (code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif not id and (code and type) and (code and command) and not (type and command):
+      self.id, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, task, is_need, comment, is_args, is_loop', case = 'code = %d AND command = %d AND type = %d' % (code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif not id and (code and type) and (code and command) and (type and command):
+      self.id, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'id, task, is_need, comment, is_args, is_loop', case = 'code = %d AND command = %d AND type = %d' % (code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif id and not (code and type) and not (code and command) and not (type and command):
+      self.code, self.command, self.task, self.is_need, self.comment, self.type, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'code, command, task, is_need, comment, type, is_args, is_loop', case = 'id = %d' % id, type = 'row')
+      self.id = id
+      self.command = SystemCommand (id = self.command)
+      self.type    = StaffType     (id = self.type)
+      self.is_need = bool          (self.is_need)
+      self.is_args = bool          (self.is_args)
+      self.is_loop = bool          (self.is_loop)
+    elif id and not (code and type) and not (code and command) and (type and command):
+      self.code, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'code, task, is_need, comment, is_args, is_loop', case = 'id = %d AND command = %d AND type = %d' % (id, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.id      = id
+      self.command = command
+      self.type    = type
+    elif id and not (code and type) and (code and command) and not (type and command):
+      self.task, self.is_need, self.comment, self.type, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'task, is_need, comment, type, is_args, is_loop', case = 'id = %d AND code = %d AND command = %d' % (id, code, command.id), type = 'row')
+      self.type    = StaffType (id = self.type)
+      self.is_need = bool      (self.is_need)
+      self.is_args = bool      (self.is_args)
+      self.is_loop = bool      (self.is_loop)
+      self.id      = id
+      self.code    = code
+      self.command = command
+    elif id and not (code and type) and (code and command) and (type and command):
+      self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'task, is_need, comment, is_args, is_loop', case = 'id = %d AND code = %d AND command = %d AND type = %d' % (id, code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.id      = id
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif id and (code and type) and not (code and command) and not (type and command):
+      self.command, self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'command, task, is_need, comment, is_args, is_loop', case = 'id = %d AND code = %d AND type = %d' % (id, code, type.id), type = 'row')
+      self.command = SystemCommand (id = self.command)
+      self.is_need = bool          (self.is_need)
+      self.is_args = bool          (self.is_args)
+      self.is_loop = bool          (self.is_loop)
+      self.id      = id
+      self.code    = code
+      self.type    = type
+    elif id and (code and type) and not (code and command) and (type and command):
+      self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'task, is_need, comment, is_args, is_loop', case = 'id = %d AND code = %d AND command = %d AND type = %d' % (id, code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.id      = id
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif id and (code and type) and (code and command) and not (type and command):
+      self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'task, is_need, comment, is_args, is_loop', case = 'id = %d AND code = %d AND command = %d AND type = %d' % (id, code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.id      = id
+      self.code    = code
+      self.command = command
+      self.type    = type
+    elif id and (code and type) and (code and command) and (type and command):
+      self.task, self.is_need, self.comment, self.is_args, self.is_loop = read_db (tables = self.TABLE, columns = 'task, is_need, comment, is_args, is_loop', case = 'id = %d AND code = %d AND command = %d AND type = %d' % (id, code, command.id, type.id), type = 'row')
+      self.is_need = bool (self.is_need)
+      self.is_args = bool (self.is_args)
+      self.is_loop = bool (self.is_loop)
+      self.id = id
+      self.code = code
+      self.command = command
+      self.type = type
+
