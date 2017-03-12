@@ -132,6 +132,9 @@ class StaffLog (object):
   def last (self, host, type):
     return read_db (tables = self.TABLE, columns = 'max(date)', case = 'host = %d AND type = %d' % (host.id, type.id), type = 'val')
 
+  def write (self):
+    write_db (table = self.TABLE, columns = ('host', 'type', 'date', 'time'), row = (self.host.id, self.type.id, self.date, self.time))
+
 class Host (object):
   '''Хост'''
   TABLE = 'hosts'
