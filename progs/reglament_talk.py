@@ -16,6 +16,11 @@ def is_notify ():
   doing = False
   list_staff_needs = StaffNeed.filter (host = host)
 
+  error_ping_server = bash ('ping -c 1 HomeServer 1>&- 2>&-')
+  if error_ping_server: 
+    doing = True
+    bash ('notify-send "Нет связи с сервером"')
+
   for staff_need in list_staff_needs:
     if staff_need.is_need:
       doing = True
