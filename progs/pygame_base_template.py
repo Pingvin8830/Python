@@ -24,7 +24,7 @@ PI    = 3.141592653
 pygame.init ()
 
 # Set the width and height of the screen [width, height]
-size = (700, 500)
+size = [700, 500]
 screen = pygame.display.set_mode (size)
 
 pygame.display.set_caption ('My Game')
