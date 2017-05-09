@@ -157,4 +157,4 @@ while True:
         res = 'good'
       if res != 'good':
         bash ('notify-send "%s %s %s"' % (device, sensor, res))
-
+  sleep (10)
