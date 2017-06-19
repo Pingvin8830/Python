@@ -2,19 +2,25 @@
 
 from datetime import datetime
 from os       import uname, system as bash
-from sys      import path
+from sys      import path, argv
 
 path.append ('/data/git/Python/moduls')
 
 from reglament_classes import SystemCommand, StaffDoing, StaffType, Host, StaffNeed, StaffLog
 
+FORCE     = False
 THIS_HOST = Host (name = uname ().nodename)
 NOW       = datetime.today ()
 
 staff_needs = StaffNeed.filter (host = THIS_HOST)
 
+while len (argv) > 1:
+  if argv [1] == '-f' or argv [1] == '--force':
+    FORCE = True
+  del argv [1]
+
 for staff_need in staff_needs:
-  if staff_need.is_need:
+  if staff_need.is_need or FORCE:
     success      = True
     staff_type   = staff_need.type
     staff_doings = StaffDoing.filter (type = staff_type)
