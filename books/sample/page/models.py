@@ -55,6 +55,6 @@ class Good(models.Model):
       return ""
 
 class BlogArticle(models.Model):
-  title = models.CharField(unique_for_date = "pubdate")
+  title = models.CharField(max_length = 50, unique_for_date = "pubdate")
   pubdate = models.DateField(auto_now_add = True)
   updated = models.DateField(auto_now = True)
