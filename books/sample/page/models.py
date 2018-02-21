@@ -10,10 +10,18 @@ class Category(models.Model):
     return self.name
 
 class Good(models.Model):
+
+  class Meta:
+    ordering = ["-price", "name"]
+    unique_together = ("category", "name", "price")
+    verbose_name = "товар"
+    verbose_name_plural = "товары"
+
   name = models.CharField(max_length = 50, unique = True, verbose_name = "Название")
   description = models.TextField()
   in_stock = models.BooleanField(default = True, db_index = True, verbose_name = "В наличии")
   category = models.ForeignKey(Category, null = True, blank = True, on_delete = models.SET_NULL)
+  price = models.FloatField()
 
   def __str__(self):
     s = self.name
