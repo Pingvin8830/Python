@@ -22,3 +22,14 @@ i {
   font-weight: bold;
 }
 
+code {
+  font-family: Courier New, monospace;
+  font-style: oblique;
+  font-size: 1.3em;
+}
+
+p {
+  text-decoration: underline;
+  font-weight: bold;
+}
+

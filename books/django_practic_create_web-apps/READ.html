@@ -433,6 +433,31 @@
     </table>
     <hr>
 
+    <h1>Теги условных выражений в шаблонах</h1>
+    <p>Проверка условий</p>
+    <code>
+      <pre>
+{% if &lt;условие 1&gt; %}
+  &lt;блок 1&gt;
+[{% elif &lt;условие 2&gt; %}
+  &lt;блок 2&gt;
+[&lt;прочие теги elif&gt;]]
+[{% else %}
+  &lt;блок else&gt;]
+{% endif %}
+      </pre>
+    </code>
+
+    <p>Проверка равенства двух значений</p>
+    <code>
+      <pre>
+{% ifequal|ifnotequal &lt;значение 1&gt; &lt;значение 2&gt; %}
+  &lt;блок&gt;
+{% endifequal|endifnotequal %}
+      </pre>
+    </code>
+    <hr>
+
   </body>
 </html>
 
