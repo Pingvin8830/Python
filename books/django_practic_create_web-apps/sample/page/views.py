@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from page.models import Category, Good
 
 # Create your views here.
@@ -16,7 +16,10 @@ def index(request, cat_id):
   return HttpResponse(s)
 
 def good(request, good_id):
-  good = Good.objects.get(pk = good_id)
+  try:
+    good = Good.objects.get(pk = good_id)
+  except Good.DoesNotExist:
+    raise Http404
   s = good.name + "<br><br>" + good.category.name + "<br><br>" + good.description
   if not good.in_stock:
     s = s + "<br><br>" + "Нет в наличии!"
