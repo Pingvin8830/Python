@@ -1,0 +1,20 @@
+table {
+  border: 1px solid black;
+  border-spacing: 0;
+}
+
+caption {
+  color: blue;
+  font-weight: bold;
+}
+
+th {
+  border: 1px solid black;
+  background: grey;
+}
+
+td {
+  border: 1px solid black;
+  padding: 3px;
+}
+
