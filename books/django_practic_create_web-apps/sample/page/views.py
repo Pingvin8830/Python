@@ -15,6 +15,10 @@ def index(request, cat_id):
     s = s + "(" + str(good.pk) + ") " + good.name + "<br>"
   return HttpResponse(s)
 
-def good(request):
-  return ""
+def good(request, good_id):
+  good = Good.objects.get(pk = good_id)
+  s = good.name + "<br><br>" + good.category.name + "<br><br>" + good.description
+  if not good.in_stock:
+    s = s + "<br><br>" + "Нет в наличии!"
+  return HttpResponse(s)
 
