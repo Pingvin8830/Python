@@ -15,3 +15,6 @@ def index(request, cat_id):
     s = s + "(" + str(good.pk) + ") " + good.name + "<br>"
   return HttpResponse(s)
 
+def good(request):
+  return ""
+
