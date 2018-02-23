@@ -5,6 +5,7 @@ from page.models import Category, Good
 # Create your views here.
 
 def index(request, cat_id):
+  cats = Category.objects.all().order_by("name")
   if cat_id == None:
     cat = Category.objects.first()
   else:
@@ -13,10 +14,7 @@ def index(request, cat_id):
     except Category.DoesNotExist:
       raise Http404
   goods = Good.objects.filter(category = cat).order_by ("name")
-  s = "Категория: " + cat.name + "<br><br>"
-  for good in goods:
-    s = s + "(" + str(good.pk) + ") " + good.name + "<br>"
-  return HttpResponse(s)
+  return render(request, "index.html", { "category": cat, "cats": cats, "goods": goods})
 
 def good(request, good_id):
   try:
