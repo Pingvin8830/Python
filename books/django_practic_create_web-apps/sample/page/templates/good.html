@@ -1,8 +1,9 @@
+{% load staticfiles %}
 <!doctype html>
 <html>
   <head>
     <meta http-enquiv="Content-Type" content="text/html; charset=utf-8">
-    <link type="text/css" href="main.css" rel="stylesheet">
+    <link type="text/css" href="{% static 'main.css' %}" rel="stylesheet">
     <title>{{ good.name }} :: {{ good.category.name }} :: Всё для уборки</title>
   </head>
   <body>
@@ -13,7 +14,7 @@
       <ul>
         {% for cat in cats %}
           <li>
-            <a href="/goods/good/{{ cat.id }}">{{ cat.name }}</a>
+            <a href="/goods/{{ cat.id }}">{{ cat.name }}</a>
           </li>
         {% endfor %}
       </ul>
