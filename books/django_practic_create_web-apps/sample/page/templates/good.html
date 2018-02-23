@@ -6,7 +6,7 @@
   <h2>{{ good.name }}</h2>
   <p class="category">Категория: {{ good.category.name }}</p>
   <p>{{ good.description|linebreaksbr }}</p>
-  <p class="not-id-stock">
+  <p class="not-in-stock">
     {% if not good.in_stock %}Нет в наличии!{% endif %}
   </p>
   <p>
