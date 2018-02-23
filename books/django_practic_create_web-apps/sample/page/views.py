@@ -17,9 +17,10 @@ def index(request, cat_id):
   return render(request, "index.html", { "category": cat, "cats": cats, "goods": goods})
 
 def good(request, good_id):
+  cats = Category.objects.all().order_by("name")
   try:
     good = Good.objects.get(pk = good_id)
   except Good.DoesNotExist:
     raise Http404
-  return render(request, "good.html", {"good": good})
+  return render(request, "good.html", {"cats": cats, "good": good})
 
