@@ -4,7 +4,9 @@
   <head>
     <meta http-enquiv="Content-Type" content="text/html; charset=utf-8">
     <link type="text/css" href="{% static 'main.css' %}" rel="stylesheet">
-    <title>{{ category.name }} :: Всё для уборки</title>
+    <title>
+      {% block title %}{% endblock %} :: Всё для уборки
+    </title>
   </head>
   <body>
     <div id="header">
@@ -20,23 +22,8 @@
       </ul>
     </div>
     <div id="main">
-      <h2>{{ categiry.name }}</h2>
-      <table>
-        <tr>
-          <th>Название</th>
-          <th>Есть в наличии</th>
-        </tr>
-        {% for good in goods %}
-          <tr>
-            <td>
-              <a href="/goods/good/{{ good.id }}/">{{ good.name }}</a>
-            </td>
-            <td class="centered">
-              {% if good.in_stock %}+{% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
+      {% block main %}
+      {% endblock %}
     </div>
     <div id="footer">
       <p>Все права принадлежат разработчикам сайта.</p>
